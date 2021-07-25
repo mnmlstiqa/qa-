@@ -1,0 +1,872 @@
+{
+	"info": {
+		"_postman_id": "a3bea242-f81b-42d1-86c5-31da67c3e3ba",
+		"name": "QA practice. hw2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7c363ea9-da7f-4673-b57a-ce3cb98f16b0",
+						"exec": [
+							"let jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token);        ",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "login",
+							"value": "mnmlstiqa",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "text"
+						}
+					],
+					"options": {
+						"formdata": {}
+					}
+				},
+				"url": {
+					"raw": "{{url}}login",
+					"host": [
+						"{{url}}login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "254243ad-7656-4e98-8d39-4cf16c63f343",
+						"exec": [
+							"//status code 200",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"//json structure validation",
+							"let schema = ",
+							"{",
+							"  \"type\": \"object\",",
+							"  \"properties\": {",
+							"    \"person\": {",
+							"      \"type\": \"object\",",
+							"      \"properties\": {",
+							"        \"u_age\": {",
+							"          \"type\": \"integer\"",
+							"        },",
+							"        \"u_name\": {",
+							"          \"type\": \"array\",",
+							"          \"items\": [",
+							"            {",
+							"              \"type\": \"string\"",
+							"            },",
+							"            {",
+							"              \"type\": \"integer\"",
+							"            },",
+							"            {",
+							"              \"type\": \"integer\"",
+							"            }",
+							"          ]",
+							"        },",
+							"        \"u_salary_1_5_year\": {",
+							"          \"type\": \"integer\"",
+							"        }",
+							"      },",
+							"      \"required\": [",
+							"        \"u_age\",",
+							"        \"u_name\",",
+							"        \"u_salary_1_5_year\"",
+							"      ]",
+							"    },",
+							"    \"qa_salary_after_12_months\": {",
+							"      \"type\": \"number\"",
+							"    },",
+							"    \"qa_salary_after_6_months\": {",
+							"      \"type\": \"integer\"",
+							"    },",
+							"    \"start_qa_salary\": {",
+							"      \"type\": \"integer\"",
+							"    }",
+							"  },",
+							"  \"required\": [",
+							"    \"person\",",
+							"    \"qa_salary_after_12_months\",",
+							"    \"qa_salary_after_6_months\",",
+							"    \"start_qa_salary\"",
+							"  ]",
+							"}",
+							"",
+							"pm.test('json is valid', () => {",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"})",
+							"",
+							"//json values validation",
+							"pm.test(\"start_qa_salary\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.start_qa_salary).to.eql(+pm.environment.get(\"salary\"));",
+							"});",
+							"",
+							"pm.test(\"qa_salary_after_6_months\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.qa_salary_after_6_months).to.eql(+pm.environment.get(\"salary\")*2);",
+							"});",
+							"",
+							"pm.test(\"qa_salary_after_12_months\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.qa_salary_after_12_months).to.eql(+pm.environment.get(\"salary\")*2.9);",
+							"});",
+							"",
+							"pm.test(\"u_salary_1_5_year\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.person.u_salary_1_5_year).to.eql(+pm.environment.get(\"salary\")*4);",
+							"});",
+							"",
+							"console.log(pm.response.json())",
+							"",
+							"",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{   \n    \"age\": \"23\",\n    \"salary\": \"4\",\n    \"name\": \"Daria\",\n    \"auth_token\": \"{{token}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}user_info",
+					"host": [
+						"{{url}}user_info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_test_user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d29f7d46-c781-44db-9d90-c209d1c68988",
+						"exec": [
+							"//json status",
+							"",
+							"pm.test(\"Status code is 200/ structure is json\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"//json structure validation",
+							"let schema = {",
+							"    \"type\": \"object\",",
+							"    \"title\": \"The root schema\",",
+							"    \"description\": \"The root schema comprises the entire JSON document.\",",
+							"    \"default\": {},",
+							"    \"examples\": [",
+							"        {",
+							"            \"age\": \"23\",",
+							"            \"family\": {",
+							"                \"children\": [",
+							"                    [",
+							"                        \"Alex\",",
+							"                        24",
+							"                    ],",
+							"                    [",
+							"                        \"Kate\",",
+							"                        12",
+							"                    ]",
+							"                ],",
+							"                \"u_salary_1_5_year\": 16",
+							"            },",
+							"            \"name\": \"Daria\",",
+							"            \"salary\": 4",
+							"        }",
+							"    ],",
+							"    \"required\": [",
+							"        \"age\",",
+							"        \"family\",",
+							"        \"name\",",
+							"        \"salary\"",
+							"    ],",
+							"    \"properties\": {",
+							"        \"age\": {",
+							"            \"$id\": \"#/properties/age\",",
+							"            \"type\": \"string\",",
+							"            \"title\": \"The age schema\",",
+							"            \"description\": \"An explanation about the purpose of this instance.\",",
+							"            \"default\": \"\",",
+							"            \"examples\": [",
+							"                \"23\"",
+							"            ]",
+							"        },",
+							"        \"family\": {",
+							"            \"$id\": \"#/properties/family\",",
+							"            \"type\": \"object\",",
+							"            \"title\": \"The family schema\",",
+							"            \"description\": \"An explanation about the purpose of this instance.\",",
+							"            \"default\": {},",
+							"            \"examples\": [",
+							"                {",
+							"                    \"children\": [",
+							"                        [",
+							"                            \"Alex\",",
+							"                            24",
+							"                        ],",
+							"                        [",
+							"                            \"Kate\",",
+							"                            12",
+							"                        ]",
+							"                    ],",
+							"                    \"u_salary_1_5_year\": 16",
+							"                }",
+							"            ],",
+							"            \"required\": [",
+							"                \"children\",",
+							"                \"u_salary_1_5_year\"",
+							"            ],",
+							"            \"properties\": {",
+							"                \"children\": {",
+							"                    \"$id\": \"#/properties/family/properties/children\",",
+							"                    \"type\": \"array\",",
+							"                    \"title\": \"The children schema\",",
+							"                    \"description\": \"An explanation about the purpose of this instance.\",",
+							"                    \"default\": [],",
+							"                    \"examples\": [",
+							"                        [",
+							"                            [",
+							"                                \"Alex\",",
+							"                                24",
+							"                            ],",
+							"                            [",
+							"                                \"Kate\",",
+							"                                12",
+							"                            ]",
+							"                        ]",
+							"                    ],",
+							"                    \"additionalItems\": true,",
+							"                    \"items\": {",
+							"                        \"$id\": \"#/properties/family/properties/children/items\",",
+							"                        \"anyOf\": [",
+							"                            {",
+							"                                \"$id\": \"#/properties/family/properties/children/items/anyOf/0\",",
+							"                                \"type\": \"array\",",
+							"                                \"title\": \"The first anyOf schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": [],",
+							"                                \"examples\": [",
+							"                                    [",
+							"                                        \"Alex\",",
+							"                                        24",
+							"                                    ]",
+							"                                ],",
+							"                                \"additionalItems\": true,",
+							"                                \"items\": {",
+							"                                    \"$id\": \"#/properties/family/properties/children/items/anyOf/0/items\",",
+							"                                    \"anyOf\": [",
+							"                                        {",
+							"                                            \"$id\": \"#/properties/family/properties/children/items/anyOf/0/items/anyOf/0\",",
+							"                                            \"type\": \"string\",",
+							"                                            \"title\": \"The first anyOf schema\",",
+							"                                            \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                            \"default\": \"\",",
+							"                                            \"examples\": [",
+							"                                                \"Alex\"",
+							"                                            ]",
+							"                                        },",
+							"                                        {",
+							"                                            \"$id\": \"#/properties/family/properties/children/items/anyOf/0/items/anyOf/1\",",
+							"                                            \"type\": \"integer\",",
+							"                                            \"title\": \"The second anyOf schema\",",
+							"                                            \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                            \"default\": 0,",
+							"                                            \"examples\": [",
+							"                                                24",
+							"                                            ]",
+							"                                        }",
+							"                                    ]",
+							"                                }",
+							"                            },",
+							"                            {",
+							"                                \"$id\": \"#/properties/family/properties/children/items/anyOf/1\",",
+							"                                \"type\": \"array\",",
+							"                                \"title\": \"The second anyOf schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": [],",
+							"                                \"examples\": [",
+							"                                    [",
+							"                                        \"Kate\",",
+							"                                        12",
+							"                                    ]",
+							"                                ],",
+							"                                \"additionalItems\": true,",
+							"                                \"items\": {",
+							"                                    \"$id\": \"#/properties/family/properties/children/items/anyOf/1/items\",",
+							"                                    \"anyOf\": [",
+							"                                        {",
+							"                                            \"$id\": \"#/properties/family/properties/children/items/anyOf/1/items/anyOf/0\",",
+							"                                            \"type\": \"string\",",
+							"                                            \"title\": \"The first anyOf schema\",",
+							"                                            \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                            \"default\": \"\",",
+							"                                            \"examples\": [",
+							"                                                \"Kate\"",
+							"                                            ]",
+							"                                        },",
+							"                                        {",
+							"                                            \"$id\": \"#/properties/family/properties/children/items/anyOf/1/items/anyOf/1\",",
+							"                                            \"type\": \"integer\",",
+							"                                            \"title\": \"The second anyOf schema\",",
+							"                                            \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                            \"default\": 0,",
+							"                                            \"examples\": [",
+							"                                                12",
+							"                                            ]",
+							"                                        }",
+							"                                    ]",
+							"                                }",
+							"                            }",
+							"                        ]",
+							"                    }",
+							"                },",
+							"                \"u_salary_1_5_year\": {",
+							"                    \"$id\": \"#/properties/family/properties/u_salary_1_5_year\",",
+							"                    \"type\": \"integer\",",
+							"                    \"title\": \"The u_salary_1_5_year schema\",",
+							"                    \"description\": \"An explanation about the purpose of this instance.\",",
+							"                    \"default\": 0,",
+							"                    \"examples\": [",
+							"                        16",
+							"                    ]",
+							"                }",
+							"            },",
+							"            \"additionalProperties\": true",
+							"        },",
+							"        \"name\": {",
+							"            \"$id\": \"#/properties/name\",",
+							"            \"type\": \"string\",",
+							"            \"title\": \"The name schema\",",
+							"            \"description\": \"An explanation about the purpose of this instance.\",",
+							"            \"default\": \"\",",
+							"            \"examples\": [",
+							"                \"Daria\"",
+							"            ]",
+							"        },",
+							"        \"salary\": {",
+							"            \"$id\": \"#/properties/salary\",",
+							"            \"type\": \"integer\",",
+							"            \"title\": \"The salary schema\",",
+							"            \"description\": \"An explanation about the purpose of this instance.\",",
+							"            \"default\": 0,",
+							"            \"examples\": [",
+							"                4",
+							"            ]",
+							"        }",
+							"    },",
+							"    \"additionalProperties\": true",
+							"}",
+							"",
+							"pm.test('json is valid', () => {",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"})",
+							"",
+							"pm.environment.set(\"name\", \"Daria\");",
+							"",
+							"pm.test(\"Compare value name\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.name).to.eql(pm.environment.get('name'));",
+							"});",
+							"",
+							"let req = request.data;",
+							"let age = parseInt(req.age)",
+							"",
+							"pm.test(\"Compare value age\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.age).to.eql+(age);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "salary",
+							"value": "{{salary}}",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "24",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "Daria",
+							"type": "text"
+						},
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}get_test_user",
+					"host": [
+						"{{url}}get_test_user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "new_data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "42d66389-db41-4100-8ea0-ac7018d871c7",
+						"exec": [
+							"//json status",
+							"",
+							"pm.test(\"Status code is 200/ structure is json\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"//json structure validation",
+							"let schema = {",
+							" \"type\": \"object\",",
+							"    \"title\": \"The root schema\",",
+							"    \"description\": \"The root schema comprises the entire JSON document.\",",
+							"    \"default\": {},",
+							"    \"examples\": [",
+							"        {",
+							"            \"age\": 23,",
+							"            \"name\": \"Dasha\",",
+							"            \"salary\": [",
+							"                4000,",
+							"                \"8000\",",
+							"                \"12000\"",
+							"            ]",
+							"        }",
+							"    ],",
+							"    \"required\": [",
+							"        \"age\",",
+							"        \"name\",",
+							"        \"salary\"",
+							"    ],",
+							"    \"properties\": {",
+							"        \"age\": {",
+							"            \"$id\": \"#/properties/age\",",
+							"            \"type\": \"integer\",",
+							"            \"title\": \"The age schema\",",
+							"            \"description\": \"An explanation about the purpose of this instance.\",",
+							"            \"default\": 0,",
+							"            \"examples\": [",
+							"                23",
+							"            ]",
+							"        },",
+							"        \"name\": {",
+							"            \"$id\": \"#/properties/name\",",
+							"            \"type\": \"string\",",
+							"            \"title\": \"The name schema\",",
+							"            \"description\": \"An explanation about the purpose of this instance.\",",
+							"            \"default\": \"\",",
+							"            \"examples\": [",
+							"                \"Dasha\"",
+							"            ]",
+							"        },",
+							"        \"salary\": {",
+							"            \"$id\": \"#/properties/salary\",",
+							"            \"type\": \"array\",",
+							"            \"title\": \"The salary schema\",",
+							"            \"description\": \"An explanation about the purpose of this instance.\",",
+							"            \"default\": [],",
+							"            \"examples\": [",
+							"                [",
+							"                    4000,",
+							"                    \"8000\"",
+							"                ]",
+							"            ],",
+							"            \"additionalItems\": true,",
+							"            \"items\": {",
+							"                \"$id\": \"#/properties/salary/items\",",
+							"                \"anyOf\": [",
+							"                    {",
+							"                        \"$id\": \"#/properties/salary/items/anyOf/0\",",
+							"                        \"type\": \"integer\",",
+							"                        \"title\": \"The first anyOf schema\",",
+							"                        \"description\": \"An explanation about the purpose of this instance.\",",
+							"                        \"default\": 0,",
+							"                        \"examples\": [",
+							"                            4000",
+							"                        ]",
+							"                    },",
+							"                    {",
+							"                        \"$id\": \"#/properties/salary/items/anyOf/1\",",
+							"                        \"type\": \"string\",",
+							"                        \"title\": \"The second anyOf schema\",",
+							"                        \"description\": \"An explanation about the purpose of this instance.\",",
+							"                        \"default\": \"\",",
+							"                        \"examples\": [",
+							"                            \"8000\",",
+							"                            \"12000\"",
+							"                        ]",
+							"                    }",
+							"                ]",
+							"            }",
+							"        }",
+							"    },",
+							"    \"additionalProperties\": true",
+							"}",
+							"",
+							"pm.test('json is valid', () => {",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"})",
+							"",
+							"",
+							"pm.test(\"0 salary verification\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.salary[0]).to.eql(4000);",
+							"});",
+							"",
+							"",
+							"pm.test(\"1 salary verification\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(Number(jsonData.salary[1])).to.eql(jsonData.salary[0]*2);",
+							"});",
+							"",
+							"pm.test(\"2 salary verification\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(Number(jsonData.salary[2])).to.eql(jsonData.salary[0]*3);",
+							"});",
+							"",
+							"pm.test(\"second element bigger than 0 element\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(+jsonData.salary[2]).to.be.above(+jsonData.salary[0]);",
+							"});",
+							"",
+							"pm.test(\"second element bigger than 1 element\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(+jsonData.salary[2]).to.be.above(+jsonData.salary[1]);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "age",
+							"value": "23",
+							"type": "text"
+						},
+						{
+							"key": "salary",
+							"value": "4000",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "Dasha",
+							"type": "text"
+						},
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}new_data",
+					"host": [
+						"{{url}}new_data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "test_pet_info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bbeb222d-eca0-409e-ad3f-d474a35e60eb",
+						"exec": [
+							"//json status",
+							"",
+							"pm.test(\"Status code is 200/ structure is json\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"//json structure validation",
+							"let schema = {",
+							"    \"type\": \"object\",",
+							"    \"title\": \"The root schema\",",
+							"    \"description\": \"The root schema comprises the entire JSON document.\",",
+							"    \"default\": {},",
+							"    \"examples\": [",
+							"        {",
+							"            \"age\": 23,",
+							"            \"daily_food\": 0.5640000000000001,",
+							"            \"daily_sleep\": 117.5,",
+							"            \"name\": \"Daria\"",
+							"        }",
+							"    ],",
+							"    \"required\": [",
+							"        \"age\",",
+							"        \"daily_food\",",
+							"        \"daily_sleep\",",
+							"        \"name\"",
+							"    ],",
+							"    \"properties\": {",
+							"        \"age\": {",
+							"            \"$id\": \"#/properties/age\",",
+							"            \"type\": \"integer\",",
+							"            \"title\": \"The age schema\",",
+							"            \"description\": \"An explanation about the purpose of this instance.\",",
+							"            \"default\": 0,",
+							"            \"examples\": [",
+							"                23",
+							"            ]",
+							"        },",
+							"        \"daily_food\": {",
+							"            \"$id\": \"#/properties/daily_food\",",
+							"            \"type\": \"number\",",
+							"            \"title\": \"The daily_food schema\",",
+							"            \"description\": \"An explanation about the purpose of this instance.\",",
+							"            \"default\": 0.0,",
+							"            \"examples\": [",
+							"                0.5640000000000001",
+							"            ]",
+							"        },",
+							"        \"daily_sleep\": {",
+							"            \"$id\": \"#/properties/daily_sleep\",",
+							"            \"type\": \"number\",",
+							"            \"title\": \"The daily_sleep schema\",",
+							"            \"description\": \"An explanation about the purpose of this instance.\",",
+							"            \"default\": 0.0,",
+							"            \"examples\": [",
+							"                117.5",
+							"            ]",
+							"        },",
+							"        \"name\": {",
+							"            \"$id\": \"#/properties/name\",",
+							"            \"type\": \"string\",",
+							"            \"title\": \"The name schema\",",
+							"            \"description\": \"An explanation about the purpose of this instance.\",",
+							"            \"default\": \"\",",
+							"            \"examples\": [",
+							"                \"Daria\"",
+							"            ]",
+							"        }",
+							"    },",
+							"    \"additionalProperties\": true",
+							"}",
+							"",
+							"pm.test('json is valid', () => {",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"})",
+							"",
+							"pm.test(\"verification of daily_food calculation result\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.daily_food).to.eql(+pm.environment.get(\"weight\")*0.012);",
+							"",
+							"})",
+							"",
+							"pm.test(\"verification of daily_food calculation result\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.daily_sleep).to.eql(+pm.environment.get(\"weight\")*2.5);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "age",
+							"value": "23",
+							"type": "text"
+						},
+						{
+							"key": "weight",
+							"value": "47",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "Daria",
+							"type": "text"
+						},
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}test_pet_info",
+					"host": [
+						"{{url}}test_pet_info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "currency",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bc4b0104-9cbd-4aca-8f03-867197a56249",
+						"exec": [
+							"console.log(pm.request.body);",
+							"console.log(pm.response.json());",
+							"",
+							"let req = pm.request.body; ",
+							"let resp = pm.response.json(); ",
+							"",
+							"console.log(resp.length); ",
+							"",
+							"//getting a random index ",
+							"let randomIndex = Math.floor(Math.random() * resp.length);",
+							"console.log('random index is: ' + randomIndex);",
+							"",
+							"//get the object by index",
+							"let randomObject = resp[randomIndex];",
+							"console.log(randomObject);",
+							"",
+							"//get Cur_ID from object",
+							"let curID = randomObject['Cur_ID'];",
+							"console.log(curID);",
+							"",
+							"pm.environment.set('Cur_ID', +curID);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}currency",
+					"host": [
+						"{{url}}currency"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "curr_byn",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						},
+						{
+							"key": "curr_code",
+							"value": "{{Cur_ID}}",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}curr_byn",
+					"host": [
+						"{{url}}curr_byn"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
